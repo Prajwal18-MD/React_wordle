@@ -6,14 +6,23 @@ const TOTAL_GUESSES = 6
 
 function App() {
   const [guessedwords, setGuessedWords] = useState(new Array(TOTAL_GUESSES).fill("     "))
-  const [correctword, setCorrectWord] = useState("")
+  const [correctWord, setcorrectWord] = useState("")
+  const [correctLetterObject, setCorrectLetterObject] = useState({})
   const [wordcount, setWordCount] = useState(0)
   const [lettercount, setLetterCount] = useState(0)
   const [currentWord, setCurrentWord] = useState("     ")
   
   // Getting Correct Word
   useEffect(()=>{
-   setCorrectWord("Apple")
+   const word = "apple"
+   setcorrectWord(word)
+
+   const letterObject = {}
+   for(let letter of word){
+    letterObject[letter] = (letterObject[letter] || 0) + 1
+   }
+
+   setCorrectLetterObject(letterObject)
   },[])
 
   function handleEnter (){
@@ -99,24 +108,40 @@ function App() {
       {guessedwords.map((word, index) =>{
         if (index === wordcount){
           return(
-            <WordLine word={currentWord} key={index}/>
+            <WordLine word={currentWord} 
+            correctWord = {correctWord} 
+            correctLetterObject={correctLetterObject} 
+            revealed = {false}
+            key={index}/>
           )
         }
             
         return(
-          <WordLine word={word} key={index}/>
+          <WordLine word={word} 
+          correctWord = {correctWord} 
+          correctLetterObject={correctLetterObject} 
+          revealed = {true}
+          key={index}/>
         )
       })}      
     </div>
   )
 }
 
-function WordLine({word}){
+function WordLine({word, correctWord, correctLetterObject, revealed}){
   return(
     <div className="flex flex-row space-x-2 m-4">
       {word.split("").map((letter, index) =>{
+
+        const hasCorrectLocation = letter === correctWord[index]
+        const hasCorrectLetter = letter in correctLetterObject
+
         return(
-          <LetterBox letter={letter} key={index}/>
+          <LetterBox 
+          letter={letter}
+          green={hasCorrectLocation && hasCorrectLetter && revealed}
+          yellow={!hasCorrectLocation && hasCorrectLetter && revealed}
+          key={index}/>
         )
       })}
 
@@ -124,9 +149,10 @@ function WordLine({word}){
   )
 }
 
-function LetterBox({letter}){
+function LetterBox({letter, green , yellow}){
   return(
-    <div className="w-24 h-24 border-4 border-black bg-white">
+    <div className={`w-24 h-24 border-4 border-black text-black text-6xl 
+    ${green ? 'bg-green-500' : yellow ? 'bg-yellow-500' : 'bg-white' }`}>
       {letter}
     </div>
   )
