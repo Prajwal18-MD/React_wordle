@@ -11,6 +11,7 @@ function App() {
   const [wordcount, setWordCount] = useState(0)
   const [lettercount, setLetterCount] = useState(0)
   const [currentWord, setCurrentWord] = useState("     ")
+  const [gameOver, setGameOver] = useState(false)
   
   // Getting Correct Word
   useEffect(()=>{
@@ -26,6 +27,18 @@ function App() {
   },[])
 
   function handleEnter (){
+    if (currentWord === correctWord){
+      setGameOver(true)
+      alert("YOU'VE WON!")
+      return
+    }
+
+    if (currentWord !== correctWord && wordcount === TOTAL_GUESSES-1){
+      setGameOver(true)
+      alert("YOU'VE LOST!")
+      return
+    }
+
     if(lettercount !== WORD_LENGTH){
       alert("Words must be 5 letters")
       return
@@ -95,8 +108,12 @@ function App() {
 
   document.addEventListener('keydown', handleKeyDown)
 
+  if (gameOver){
+    document.removeEventListener('keydown',handleKeyDown)
+  }
+
   return () =>{document.removeEventListener('keydown',handleKeyDown)}
-  },[handleEnter, handleBackspace, handleAplphabetical])
+  },[handleEnter, handleBackspace, handleAplphabetical, gameOver])
 
   useEffect(() => {
     console.log(currentWord)
@@ -111,7 +128,7 @@ function App() {
             <WordLine word={currentWord} 
             correctWord = {correctWord} 
             correctLetterObject={correctLetterObject} 
-            revealed = {false}
+            revealed = {false || gameOver}
             key={index}/>
           )
         }
