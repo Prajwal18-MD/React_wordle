@@ -9,11 +9,90 @@ function App() {
   const [correctword, setCorrectWord] = useState("")
   const [wordcount, setWordCount] = useState(0)
   const [lettercount, setLetterCount] = useState(0)
+  const [currentWord, setCurrentWord] = useState("     ")
   
   // Getting Correct Word
   useEffect(()=>{
    setCorrectWord("Apple")
   },[])
+
+  function handleEnter (){
+    if(lettercount !== WORD_LENGTH){
+      alert("Words must be 5 letters")
+      return
+    }
+
+    setGuessedWords((current) => {
+      const updatedGuessedWords = [...current]
+      updatedGuessedWords[wordcount] = currentWord
+      return updatedGuessedWords
+
+    })
+
+    setWordCount(current => current + 1)
+    setLetterCount(0)
+    setCurrentWord("     ")
+
+  }
+
+  function handleBackspace (){
+    if (lettercount === 0){
+      return
+    }
+
+    setCurrentWord((currentWord) => {
+      const currentWordArray = currentWord.split("")
+      currentWordArray[lettercount - 1] = " "
+      const newWord = currentWordArray.join("")
+      return newWord
+    })
+
+    setLetterCount(currentCount => currentCount - 1)
+    
+  }
+
+  function handleAplphabetical (key){
+    if (lettercount === WORD_LENGTH){
+      return
+    }
+
+    setCurrentWord((currentWord) => {
+      const currentWordArray = currentWord.split("")
+      currentWordArray[lettercount] = key
+      const newWord = currentWordArray.join("")
+      return newWord
+    })
+
+    setLetterCount(currentCount => currentCount + 1)
+    
+  }
+
+  useEffect(() => {
+  
+  function handleKeyDown(e){
+    if (e.key === "Enter"){
+      handleEnter()
+
+    } else if (e.key === "Backspace"){
+      handleBackspace()
+      
+    } else if (/^[a-zA-Z]$/.test(e.key)){
+      handleAplphabetical(e.key)
+
+    } else {
+      return
+    }
+  }
+
+  document.addEventListener('keydown', handleKeyDown)
+
+  return () =>{document.removeEventListener('keydown',handleKeyDown)}
+  },[handleEnter, handleBackspace, handleAplphabetical])
+
+  useEffect(() => {
+    console.log(currentWord)
+
+  },[currentWord])
 
   return (
     <div>
