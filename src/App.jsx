@@ -97,6 +97,12 @@ function App() {
   return (
     <div>
       {guessedwords.map((word, index) =>{
+        if (index === wordcount){
+          return(
+            <WordLine word={currentWord} key={index}/>
+          )
+        }
+            
         return(
           <WordLine word={word} key={index}/>
         )
