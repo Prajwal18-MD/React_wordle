@@ -22,7 +22,6 @@ function App() {
     const words = response.data
     const randomIndex = Math.floor(Math.random() * words.length)
     const word = words[randomIndex].word
-    console.log(word)
     const letterObject = {}
     for(let letter of word){
       letterObject[letter] = (letterObject[letter] || 0) + 1
