@@ -1,5 +1,6 @@
 import { useState, useEffect} from "react"
 import './App.css'
+import axios from "axios"
 
 const WORD_LENGTH = 5
 const TOTAL_GUESSES = 6
@@ -15,15 +16,22 @@ function App() {
   
   // Getting Correct Word
   useEffect(()=>{
-   const word = "apple"
-   setcorrectWord(word)
+   async function fetchWord() {
 
-   const letterObject = {}
-   for(let letter of word){
-    letterObject[letter] = (letterObject[letter] || 0) + 1
+    const response = await axios.get('https://api.datamuse.com/words?sp=?????&max=1000')
+    const words = response.data
+    const randomIndex = Math.floor(Math.random() * words.length)
+    const word = words[randomIndex].word
+    console.log(word)
+    const letterObject = {}
+    for(let letter of word){
+      letterObject[letter] = (letterObject[letter] || 0) + 1
+    }
+    setcorrectWord(word)
+    setCorrectLetterObject(letterObject)    
    }
+  fetchWord()
 
-   setCorrectLetterObject(letterObject)
   },[])
 
   function handleEnter (){
